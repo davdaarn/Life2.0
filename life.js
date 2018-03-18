@@ -1,5 +1,5 @@
-const CELL_BODY = 5;
-const CELL_BORDER = 0.2;
+const CELL_BODY = 4;
+const CELL_BORDER = 0.3;
 const CELL_ZONE = CELL_BODY + CELL_BODY * CELL_BORDER;
 // const LIVING
 
@@ -76,15 +76,17 @@ class Life {
     let xx = 0;
 
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     for (let i = 0; i < this.canvas.width - CELL_ZONE; i += CELL_ZONE) {
       for (let j = 0; j < this.canvas.height - CELL_ZONE; j += CELL_ZONE) {
         if (yy >= this.cellsY) {
           yy = 0;
-          // console.log(yy, xx);
         }
         if (this.buffer[this.currentBufferIndex][yy][xx] === 1) {
           this.context.putImageData(this.image_data_blue, i, j);
+          // console.log(yy, xx);
+        }
+        if (this.buffer[this.currentBufferIndex][yy][xx] === 3) {
+          this.context.putImageData(this.image_data_green, i, j);
           // console.log(yy, xx);
         }
         yy++;
@@ -144,14 +146,21 @@ class Life {
             // this cell lives in the next buffer
             backBuffer[y][x] = 1;
           }
+          //
+          if (neighborCounter === 6) {
+            backBuffer[y][x] = 3;
+          }
         }
         // if this cell is currently dead
-        if (currentCell === 0) {
+        if (currentCell === 0 || currentCell === 3) {
           // if live neighbors is exactly 3
           if (neighborCounter === 3) {
             backBuffer[y][x] = 1;
           } else {
             backBuffer[y][x] = 0;
+          }
+          if (neighborCounter === 6) {
+            backBuffer[y][x] = 3;
           }
         }
       }
@@ -164,10 +173,10 @@ class Life {
 }
 
 // height, width
-const life = new Life(800, screen.width);
+const life = new Life(500, 1000);
 life.randomize();
 life.draw();
 
 setInterval(() => {
   life.step();
-}, 200);
+}, 500);
