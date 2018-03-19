@@ -1,3 +1,3 @@
-#Game of Life with rules for Zombies
+# Game of Life with rules for Zombies
 
-##Very experimental
+## Very experimental
