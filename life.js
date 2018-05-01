@@ -1,4 +1,4 @@
-const CELL_BODY = 4;
+const CELL_BODY = 2;
 const CELL_BORDER = 0.3;
 const CELL_ZONE = CELL_BODY + CELL_BODY * CELL_BORDER;
 // const LIVING
@@ -61,14 +61,38 @@ class Life {
   }
 
   randomize() {
-    this.buffer[0] = Array2d(this.cellsY, this.cellsX);
+    // this.buffer[0] = Array2d(this.cellsY, this.cellsX);
     for (let y = 0; y < this.cellsY; y++) {
       for (let x = 0; x < this.cellsX; x++) {
         const rand = Math.floor(Math.random() * 2);
-        this.buffer[0][y][x] = rand;
+        this.buffer[this.currentBufferIndex][y][x] = rand;
       }
     }
     console.log(this.buffer[0]);
+  }
+
+  init() {
+    this.buffer[0] = Array2d(this.cellsY, this.cellsX);
+    for (let y = 0; y < this.cellsY; y++) {
+      for (let x = 0; x < this.cellsX; x++) {
+        this.buffer[0][y][x] = 0;
+      }
+    }
+    console.log(this.buffer[0]);
+  }
+
+  zombie(a, b) {
+    console.log('clicked');
+    let next = this.currentBufferIndex === 0 ? 1 : 0;
+    console.log(next);
+    let zombie = [[3]];
+    this.buffer[this.currentBufferIndex][50][50] = zombie[0][0];
+
+    // for (let y = 0; y < zombie.length; y++) {
+    //   for (let x = 0; x < zombie[y].length; x++) {
+    //     this.buffer[this.currentBufferIndex][20 + y][20 + x] = zombie[y][x];
+    //   }
+    // }
   }
 
   draw() {
@@ -99,6 +123,8 @@ class Life {
     let backBufferIndex = this.currentBufferIndex === 0 ? 1 : 0;
     let currentBuffer = this.buffer[this.currentBufferIndex];
     let backBuffer = this.buffer[backBufferIndex];
+
+    const rand = Math.floor(Math.random() * 1000);
 
     const hasLivingNeighbor = (x, y) => {
       let livingCounter = 0;
@@ -139,7 +165,12 @@ class Life {
           // if the live neighbors are <2 or >3
           if (neighborCounter < 2 || neighborCounter > 3) {
             // this cell dies in the next buffer
-            backBuffer[y][x] = 0;
+            // backBuffer[y][x] = 0;
+            if (rand === 3) {
+              backBuffer[y][x] = 3;
+            } else {
+              backBuffer[y][x] = 0;
+            }
           }
           // if the live neighbors equal 2 or 3
           if (neighborCounter === 2 || neighborCounter === 3) {
@@ -154,13 +185,15 @@ class Life {
         // if this cell is currently dead
         if (currentCell === 0 || currentCell === 3) {
           // if live neighbors is exactly 3
+          const spawn = Math.floor(Math.random() * 1000000);
           if (neighborCounter === 3) {
             backBuffer[y][x] = 1;
+          } else if (neighborCounter === 6) {
+            backBuffer[y][x] = 3;
+          } else if (spawn === 666) {
+            backBuffer[y][x] = 3;
           } else {
             backBuffer[y][x] = 0;
-          }
-          if (neighborCounter === 6) {
-            backBuffer[y][x] = 3;
           }
         }
       }
@@ -174,9 +207,10 @@ class Life {
 
 // height, width
 const life = new Life(500, 1000);
-life.randomize();
+life.init();
+// life.randomize();
 life.draw();
 
 setInterval(() => {
   life.step();
-}, 500);
+}, 100);
