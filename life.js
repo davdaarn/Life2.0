@@ -179,4 +179,4 @@ life.draw();
 
 setInterval(() => {
   life.step();
-}, 500);
+}, 100);
